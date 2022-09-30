@@ -1,0 +1,3 @@
+#!/bin/sh
+outfile=/tmp/stash_plugin_debug-$(id -u)
+exec /usr/local/bin/snoop "$outfile" /usr/libexec/condor/stash_plugin_orig "$@"

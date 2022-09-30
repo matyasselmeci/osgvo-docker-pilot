@@ -61,7 +61,7 @@ RUN git clone --branch ${OSG_FLOCK_BRANCH} https://github.com/${OSG_FLOCK_REPO} 
  && install node-check/ospool-lib                                       /gwms/client_group_main/ospool-lib \
  && install node-check/singularity-extras                               /gwms/client_group_main/singularity-extras \
  && install stashcp/stashcp                                             /gwms/client/stashcp \
- && install stashcp/stash_plugin                                        /usr/libexec/condor/stash_plugin \
+ && install stashcp/stash_plugin                                        /usr/libexec/condor/stash_plugin_orig \
  && ln -snf /gwms/client/stashcp                                        /usr/bin/stashcp \
  && echo "OSG_FLOCK_REPO = \"$OSG_FLOCK_REPO\""        >> /etc/condor/config.d/60-flock-sources.config \
  && echo "OSG_FLOCK_BRANCH = \"$OSG_FLOCK_BRANCH\""    >> /etc/condor/config.d/60-flock-sources.config \
@@ -141,6 +141,10 @@ RUN chmod 04755 /usr/bin/launch_rsyslogd && \
     ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 COPY supervisord_startup.sh /usr/local/sbin/
+
+COPY snoop /usr/local/bin/snoop
+COPY stash_plugin_debug_wrapper /usr/libexec/condor/stash_plugin
+RUN chmod +x /usr/local/bin/snoop /usr/libexec/condor/stash_plugin
 
 WORKDIR /pilot
 # We need an ENTRYPOINT so we can use cvmfsexec with any command (such as bash for debugging purposes)

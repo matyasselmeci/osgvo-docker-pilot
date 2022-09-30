@@ -1,0 +1,35 @@
+#!/bin/bash
+
+outfile=${1?Need outfile}
+shift
+if [[ -z $* ]]
+then
+    echo "no command provided"
+    exit 2
+fi
+if ! touch "$outfile"
+then
+    echo "can't touch $outfile"
+    exit 128
+fi
+
+{
+    printf "|\n|\n| %s \t" "$(date -Isec)"
+    printf "[%s] " "$@"
+    printf "\n|\n|\n"
+} >> "$outfile"
+
+if [[ -t 0 ]]; then
+    # don't save stdin if it comes from a terminal
+    "$@" \
+        > >(tee -a "$outfile") \
+        2> >(tee -a "$outfile" >&2)
+    ret=$?
+else
+    tee -a "$outfile" | "$@" \
+        > >(tee -a "$outfile") \
+        2> >(tee -a "$outfile" >&2)
+    ret=$?
+fi
+printf "|\nret: %s\n|\n\n" "$ret" >> "$outfile"
+exit $?
