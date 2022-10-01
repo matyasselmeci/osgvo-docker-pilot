@@ -1,15 +1,15 @@
 #!/bin/bash
 
-outfile=${1?Need outfile}
+Logfile=${1?Need Logfile}
 shift
 if [[ -z $* ]]
 then
     echo "no command provided"
     exit 2
 fi
-if ! touch "$outfile"
+if ! touch "$Logfile"
 then
-    echo "can't touch $outfile"
+    echo "can't touch $Logfile"
     exit 128
 fi
 
@@ -17,19 +17,48 @@ fi
     printf "|\n|\n| %s \t" "$(date -Isec)"
     printf "[%s] " "$@"
     printf "\n|\n|\n"
-} >> "$outfile"
+
+    if [[ $2 == "-infile" ]]; then
+        printf "|\n| infile"
+        if [[ ! -f $3 ]]; then
+            printf " does not exist\n|\n"
+        elif [[ ! -s $3 ]]; then
+            printf " is empty\n|\n"
+        else
+            printf " has contents:\n|\n"
+            cat "$3" 2>&1
+            printf "\n\n"
+        fi
+    fi
+} >> "$Logfile"
 
 if [[ -t 0 ]]; then
     # don't save stdin if it comes from a terminal
     "$@" \
-        > >(tee -a "$outfile") \
-        2> >(tee -a "$outfile" >&2)
+        > >(tee -a "$Logfile") \
+        2> >(tee -a "$Logfile" >&2)
     ret=$?
 else
-    tee -a "$outfile" | "$@" \
-        > >(tee -a "$outfile") \
-        2> >(tee -a "$outfile" >&2)
+    tee -a "$Logfile" | "$@" \
+        > >(tee -a "$Logfile") \
+        2> >(tee -a "$Logfile" >&2)
     ret=$?
 fi
-printf "|\nret: %s\n|\n\n" "$ret" >> "$outfile"
-exit $?
+{
+    printf "\n|\n| ret: %s\n|\n\n" "$ret"
+
+    if [[ $4 == "-outfile" ]]; then
+        printf "|\n| outfile"
+        if [[ ! -f $5 ]]; then
+            printf " does not exist\n|\n"
+        elif [[ ! -s $5 ]]; then
+            printf " is empty\n|\n"
+        else
+            printf " has contents:\n|\n"
+            cat "$5" 2>&1
+            printf "\n\n"
+        fi
+    fi
+} >> "$Logfile"
+
+exit $ret
