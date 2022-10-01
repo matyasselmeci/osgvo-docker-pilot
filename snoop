@@ -13,33 +13,37 @@ then
     exit 128
 fi
 
+Realprog=$1
+shift
+
 {
     printf "|\n|\n| %s \t" "$(date -Isec)"
-    printf "[%s] " "$@"
+    printf "[%s] " "$Realprog" "$@"
     printf "\n|\n|\n"
 
-    if [[ $2 == "-infile" ]]; then
+    if [[ $1 == "-infile" ]]; then
         printf "|\n| infile"
-        if [[ ! -f $3 ]]; then
+        if [[ ! -f $2 ]]; then
             printf " does not exist\n|\n"
-        elif [[ ! -s $3 ]]; then
+        elif [[ ! -s $2 ]]; then
             printf " is empty\n|\n"
         else
             printf " has contents:\n|\n"
-            cat "$3" 2>&1
+            cat "$2" 2>&1
             printf "\n\n"
         fi
     fi
 } >> "$Logfile"
 
+
 if [[ -t 0 ]]; then
     # don't save stdin if it comes from a terminal
-    "$@" \
+    "$Realprog" -d "$@" \
         > >(tee -a "$Logfile") \
         2> >(tee -a "$Logfile" >&2)
     ret=$?
 else
-    tee -a "$Logfile" | "$@" \
+    tee -a "$Logfile" | "$Realprog" -d "$@" \
         > >(tee -a "$Logfile") \
         2> >(tee -a "$Logfile" >&2)
     ret=$?
@@ -47,15 +51,15 @@ fi
 {
     printf "\n|\n| ret: %s\n|\n\n" "$ret"
 
-    if [[ $4 == "-outfile" ]]; then
+    if [[ $3 == "-outfile" ]]; then
         printf "|\n| outfile"
-        if [[ ! -f $5 ]]; then
+        if [[ ! -f $4 ]]; then
             printf " does not exist\n|\n"
-        elif [[ ! -s $5 ]]; then
+        elif [[ ! -s $4 ]]; then
             printf " is empty\n|\n"
         else
             printf " has contents:\n|\n"
-            cat "$5" 2>&1
+            cat "$4" 2>&1
             printf "\n\n"
         fi
     fi
