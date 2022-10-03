@@ -17,51 +17,69 @@ Realprog=$1
 shift
 
 {
-    printf "|\n|\n| %s \t" "$(date -Isec)"
+    printf "
+***
+***
+*** %s \t" "$(date -Isec)"
     printf "[%s] " "$Realprog" "$@"
-    printf "\n|\n|\n"
+    printf "
+***
+***
+
+"
 
     if [[ $1 == "-infile" ]]; then
-        printf "|\n| infile"
+        printf "\n*** infile"
         if [[ ! -f $2 ]]; then
-            printf " does not exist\n|\n"
+            printf " does not exist\n"
         elif [[ ! -s $2 ]]; then
-            printf " is empty\n|\n"
+            printf " is empty\n"
         else
-            printf " has contents:\n|\n"
+            printf " has contents:\n"
             cat "$2" 2>&1
-            printf "\n\n"
         fi
+        printf "\n\n"
     fi
 } >> "$Logfile"
 
+stdinfile=$(mktemp snoop-stdin.XXXXXX)
 
 if [[ -t 0 ]]; then
-    # don't save stdin if it comes from a terminal
+    # don't save stdin if we're coming from a terminal
     "$Realprog" -d "$@" \
         > >(tee -a "$Logfile") \
         2> >(tee -a "$Logfile" >&2)
     ret=$?
 else
-    tee -a "$Logfile" | "$Realprog" -d "$@" \
+    cat > "$stdinfile"
+    printf "\n*** stdin:\n" >>"$Logfile"
+    cat "$stdinfile" >> "$Logfile"
+    printf "\n" >> "$Logfile"
+    cat "$stdinfile" | "$Realprog" -d "$@" \
         > >(tee -a "$Logfile") \
         2> >(tee -a "$Logfile" >&2)
     ret=$?
 fi
+rm -f "$stdinfile"
 {
-    printf "\n|\n| ret: %s\n|\n\n" "$ret"
+    printf "
+***
+*** ret: %d
+***
+
+" "$ret"
 
     if [[ $3 == "-outfile" ]]; then
-        printf "|\n| outfile"
+        printf "\n*** outfile"
         if [[ ! -f $4 ]]; then
-            printf " does not exist\n|\n"
+            printf " does not exist\n"
         elif [[ ! -s $4 ]]; then
-            printf " is empty\n|\n"
+            printf " is empty\n"
         else
-            printf " has contents:\n|\n"
+            printf " has contents:\n"
             cat "$4" 2>&1
-            printf "\n\n"
         fi
+        printf "\n\n"
     fi
 } >> "$Logfile"
 
