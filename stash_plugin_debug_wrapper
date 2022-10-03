@@ -1,8 +1,3 @@
 #!/bin/sh
 Logfile=/tmp/stash_plugin_debug-$(id -u)
-{
-    echo
-    /usr/bin/env
-    echo
-} >> "$Logfile"
 exec /usr/local/bin/snoop "$Logfile" /usr/libexec/condor/stash_plugin_orig "$@"
