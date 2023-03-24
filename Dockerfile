@@ -86,8 +86,8 @@ RUN mkdir -p /gwms/main /gwms/client /gwms/client_group_main /gwms/client_group_
 
 # osgvo scripts
 # Specify the branch and fork of the opensciencegrid/osg-flock repo to get the pilot scripts from
-ARG OSG_FLOCK_REPO=matyasselmeci/osg-flock
-ARG OSG_FLOCK_BRANCH=wip/glidein-singularity-bindpath-from-env
+ARG OSG_FLOCK_REPO=opensciencegrid/osg-flock
+ARG OSG_FLOCK_BRANCH=master
 RUN git clone --branch ${OSG_FLOCK_BRANCH} https://github.com/${OSG_FLOCK_REPO} osg-flock \
  && cd osg-flock \
  # production files: \
