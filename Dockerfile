@@ -194,7 +194,7 @@ ENV ACCEPT_IDLE_MINUTES=30
 ENV OSG_PROJECT_NAME=
 
 # Additional paths to bind for Singularity jobs; same syntax as the -B option in singularity run
-ENV GLIDEIN_SINGULARITY_BINDPATH=
+ENV SINGULARITY_BIND_EXTRA=
 
 # Additional restrictions for your START expression
 ENV GLIDEIN_Start_Extra=
