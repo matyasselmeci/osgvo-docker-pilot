@@ -86,8 +86,8 @@ RUN mkdir -p /gwms/main /gwms/client /gwms/client_group_main /gwms/client_group_
 
 # osgvo scripts
 # Specify the branch and fork of the opensciencegrid/osg-flock repo to get the pilot scripts from
-ARG OSG_FLOCK_REPO=opensciencegrid/osg-flock
-ARG OSG_FLOCK_BRANCH=master
+ARG OSG_FLOCK_REPO=matyasselmeci/osg-flock
+ARG OSG_FLOCK_BRANCH=wip/glidein-singularity-bindpath-from-env
 RUN git clone --branch ${OSG_FLOCK_BRANCH} https://github.com/${OSG_FLOCK_REPO} osg-flock \
  && cd osg-flock \
  # production files: \
@@ -192,6 +192,9 @@ ENV ACCEPT_IDLE_MINUTES=30
 
 # Set this to restrict this pilot to only run jobs from a specific Project
 ENV OSG_PROJECT_NAME=
+
+# Additional paths to bind for Singularity jobs; same syntax as the -B option in singularity run
+ENV GLIDEIN_SINGULARITY_BINDPATH=
 
 # Additional restrictions for your START expression
 ENV GLIDEIN_Start_Extra=
