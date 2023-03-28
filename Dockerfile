@@ -214,3 +214,5 @@ ENV ENABLE_REMOTE_SYSLOG=true
 # Use ITB versions of scripts and connect to the ITB pool
 ENV ITB=false
 
+# Print various debugging information on startup
+ENV DEBUG_STARTUP=false

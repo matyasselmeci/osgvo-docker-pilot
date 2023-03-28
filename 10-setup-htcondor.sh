@@ -638,3 +638,30 @@ EOF
 # workaround this fact, we are pre-invoking ldconfig.  This creates the cache and helps
 # the inner singularity invocation succeed.
 /usr/local/bin/ldconfig || :
+
+if is_true "$DEBUG_STARTUP"; then
+    set +x
+    echo
+    echo
+    echo '*********************************************************************'
+    echo '* DEBUG DUMP FOLLOWS                                                *'
+    echo '*********************************************************************'
+    echo
+    printenv || echo "exited with $?"
+    echo
+    echo
+    echo "Pilot config file at ${PILOT_CONFIG_FILE}:"
+    echo
+    cat "$PILOT_CONFIG_FILE"
+    echo
+    echo
+    echo "condor_config_val dump"
+    echo
+    condor_config_val -dump -verbose || echo "exited with $?"
+    echo
+    echo
+    echo '*********************************************************************'
+    echo '* END DEBUG DUMP                                                    *'
+    echo '*********************************************************************'
+    set -x
+fi
