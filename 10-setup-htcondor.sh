@@ -647,7 +647,7 @@ if is_true "$DEBUG_STARTUP"; then
     echo '* DEBUG DUMP FOLLOWS                                                *'
     echo '*********************************************************************'
     echo
-    printenv
+    printenv || echo "exited with $?"
     echo
     echo
     echo "Pilot config file at ${PILOT_CONFIG_FILE}:"
@@ -657,7 +657,7 @@ if is_true "$DEBUG_STARTUP"; then
     echo
     echo "condor_config_val dump"
     echo
-    condor_config_val -dump -verbose
+    condor_config_val -dump -verbose || echo "exited with $?"
     echo
     echo
     echo '*********************************************************************'
