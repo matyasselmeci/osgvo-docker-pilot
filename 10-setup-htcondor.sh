@@ -279,6 +279,12 @@ else
     REGISTRY_HOSTNAME="os-registry.opensciencegrid.org"
 fi
 
+if [[ $APPTAINER_NAME || $SINGULARITY_NAME ]]; then
+    # If we were launched via Apptainer or Singularity then we don't have privs to run rsyslog.
+    # Disable syslog.
+    ENABLE_REMOTE_SYSLOG=false
+fi
+
 if ! is_true "$ENABLE_REMOTE_SYSLOG"; then
     SYSLOG_HOST=
     REGISTRY_HOSTNAME=
