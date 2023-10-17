@@ -297,6 +297,12 @@ else
     REGISTRY_HOSTNAME="os-registry.opensciencegrid.org"
 fi
 
+if [[ $APPTAINER_NAME || $SINGULARITY_NAME ]]; then
+    # Containers launched with apptainer/singularity are user-launched;
+    # don't pollute the central syslog with their output.
+    ENABLE_REMOTE_SYSLOG=false
+fi
+
 if ! is_true "$ENABLE_REMOTE_SYSLOG"; then
     SYSLOG_HOST=
     REGISTRY_HOSTNAME=
