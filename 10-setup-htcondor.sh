@@ -218,6 +218,7 @@ case ${POOL} in
     '')
         echo "POOL is blank" >&2
         exit 1
+        ;;
     *)
         echo "Unknown pool $POOL" >&2
         exit 1
