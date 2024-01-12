@@ -2,8 +2,13 @@
 
 set -xe
 
-if [ `id -u` = 0 ]; then
+UID=$(id -u)
+if [ "$UID" = 0 ]; then
     echo "Please do not run me as root!"
+    exit 1
+fi
+if ! getent passwd "$UID"; then
+    echo "The current user $UID is not in the password file"
     exit 1
 fi
 

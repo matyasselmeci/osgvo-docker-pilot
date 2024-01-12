@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 OSP_TOKEN_PATH=/tmp/token
-COMMON_DOCKER_ARGS="run --user osg
+COMMON_DOCKER_ARGS="run --user pilot
                         --detach
                         --security-opt apparmor=unconfined
                         --name backfill

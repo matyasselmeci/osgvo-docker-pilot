@@ -20,8 +20,11 @@ ARG BASE_OS=al8
 ARG BASE_YUM_REPO=testing
 ARG TIMESTAMP_IMAGE=osgvo-docker-pilot:${BASE_OSG_SERIES}-${BASE_OS}-${BASE_YUM_REPO}-$(date +%Y%m%d-%H%M)
 
-RUN useradd osg \
- && mkdir -p ~osg/.condor \
+ARG PILOT_UID=1000
+ARG PILOT_GID=$PILOT_UID
+RUN groupadd -g $PILOT_GID pilot \
+ && useradd -u $PILOT_UID pilot -g $PILOT_GID \
+ && mkdir -p ~pilot/.condor \
  && if [[ $BASE_YUM_REPO != release ]]; then \
         yum -y install apptainer --enablerepo=epel-testing; \
     else \
@@ -149,15 +152,9 @@ COPY rsyslog.conf /etc/
 RUN sed -i "s|@CONTAINER_TAG@|${TIMESTAMP_IMAGE}|" /etc/condor/config.d/50-main.config
 
 
-RUN chown -R osg: ~osg 
+RUN chown -R pilot: ~pilot
 
 RUN mkdir -p /pilot && chmod 1777 /pilot
-
-# At Expanse, the admins provided a fixed UID/GID that the container will be run as;
-# condor fails to start if this isn't a resolvable username.  For now, create the username
-# by hand.  If we hit this at more sites, we can do a for-loop for populating /etc/{passwd,groups}
-# instead of adding individual user accounts one-by-one.
-RUN groupadd --gid 12497 g12497 && useradd --gid 12497 --create-home --uid 532362 u532362
 
 COPY --from=compile /launch_rsyslogd /usr/bin/launch_rsyslogd
 RUN chmod 04755 /usr/bin/launch_rsyslogd && \
@@ -172,6 +169,7 @@ ENTRYPOINT ["/usr/local/sbin/entrypoint.sh"]
 # Adding ENTRYPOINT clears CMD
 CMD ["/usr/local/sbin/supervisord_startup.sh"]
 
+USER pilot
 
 #
 # Here are the various environment variables you can use to customize your pilot
