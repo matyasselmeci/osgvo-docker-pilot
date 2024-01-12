@@ -14,8 +14,11 @@ ARG BASE_OS
 ARG BASE_YUM_REPO
 ARG TIMESTAMP_IMAGE=osgvo-docker-pilot:${BASE_OSG_SERIES}-${BASE_OS}-${BASE_YUM_REPO}-$(date +%Y%m%d-%H%M)
 
-RUN useradd osg \
- && mkdir -p ~osg/.condor \
+ARG PILOT_UID=1000
+ARG PILOT_GID=$PILOT_UID
+RUN groupadd -g $PILOT_GID pilot \
+ && useradd -u $PILOT_UID pilot -g $PILOT_GID \
+ && mkdir -p ~pilot/.condor \
  && if [[ $BASE_YUM_REPO != release ]]; then \
         yum -y install apptainer --enablerepo=epel-testing; \
     else \
@@ -158,7 +161,7 @@ COPY rsyslog.conf /etc/
 RUN sed -i "s|@CONTAINER_TAG@|${TIMESTAMP_IMAGE}|" /etc/condor/config.d/50-main.config
 
 
-RUN chown -R osg: ~osg 
+RUN chown -R pilot: ~pilot
 
 RUN mkdir -p /pilot && chmod 1777 /pilot
 
@@ -189,6 +192,7 @@ ENTRYPOINT ["/usr/local/sbin/entrypoint.sh"]
 # Adding ENTRYPOINT clears CMD
 CMD ["/usr/local/sbin/supervisord_startup.sh"]
 
+USER pilot
 
 #
 # Here are the various environment variables you can use to customize your pilot
