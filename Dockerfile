@@ -200,7 +200,7 @@ ENV NUM_CPUS=
 # Amount of memory (in MB) available to jobs
 ENV MEMORY=
 
-# Space separated list of repos to mount at startup (if using cvmfsexec);
+# Comma-or-space-separated list of repos to mount at startup (if using cvmfsexec);
 # leave this blank to disable cvmfsexec
 ENV CVMFSEXEC_REPOS=
 # The proxy to use for CVMFS; leave this blank to use the default
