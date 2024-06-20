@@ -133,6 +133,15 @@ RUN git clone --branch ${OSG_FLOCK_BRANCH} https://github.com/${OSG_FLOCK_REPO} 
  # cleanup \
  && cd .. && rm -rf osg-flock
 
+#
+#
+# Hermitcrab
+#
+#
+ADD --keep-git-dir=true https://github.com/matyasselmeci/hermitcrab#wip/dockerpilot /usr/local/src/hermitcrab
+RUN /usr/local/src/hermitcrab/ministarter/compose.py --os="AlmaLinux9" --series=23.x --pilotfile=/usr/local/sbin/pilot.pyz
+
+
 # Override the software-base supervisord.conf to throw away supervisord logs
 COPY supervisord.conf /etc/supervisord.conf
 
