@@ -141,9 +141,9 @@ RUN git clone --branch ${OSG_FLOCK_BRANCH} https://github.com/${OSG_FLOCK_REPO} 
 ARG HERMITCRAB_BRANCH=wip/dockerpilot
 ARG HERMITCRAB_REPO=matyasselmeci/hermitcrab
 RUN git clone --branch ${HERMITCRAB_BRANCH} https://github.com/${HERMITCRAB_REPO} hermitcrab \
- && cd hermitcrab \
- && ./ministarter/compose.py --no-condor --pilotfile=/usr/local/sbin/pilot.pyz \
- && cd .. && rm -rf hermitcrab
+ && cd hermitcrab/ministarter \
+ && ./compose.py --no-condor --pilotfile=/usr/local/sbin/pilot.pyz \
+ && cd ../.. && rm -rf hermitcrab
 
 
 # Override the software-base supervisord.conf to throw away supervisord logs
