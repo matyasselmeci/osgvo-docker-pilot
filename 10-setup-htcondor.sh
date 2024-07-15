@@ -638,6 +638,9 @@ fi
 
 # interpret the condor_vars
 set +x
+echo "------   Contents of '$condor_vars_file'   ------"
+cat "$condor_vars_file"
+echo "------ End contents of '$condor_vars_file' ------"
 while read line
 do
     set_var $line
