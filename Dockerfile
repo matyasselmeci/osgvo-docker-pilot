@@ -21,12 +21,15 @@ ARG BASE_OS
 ARG BASE_YUM_REPO
 ARG TIMESTAMP_IMAGE=osgvo-docker-pilot:${BASE_OSG_SERIES}-${BASE_OS}-${BASE_YUM_REPO}-$(date +%Y%m%d-%H%M)
 
+# APPTAINER should be "apptainer" or "apptainer-suid"
+ARG APPTAINER=apptainer
+
 RUN useradd osg \
  && mkdir -p ~osg/.condor \
  && if [[ $BASE_YUM_REPO != release ]]; then \
-        yum -y install apptainer --enablerepo=epel-testing; \
+        yum -y install "$APPTAINER" --enablerepo=epel-testing; \
     else \
-        yum -y install apptainer; \
+        yum -y install "$APPTAINER"; \
     fi \
  && yum -y install \
         osg-wn-client \
