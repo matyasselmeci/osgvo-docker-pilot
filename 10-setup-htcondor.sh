@@ -683,6 +683,14 @@ STARTER_JOB_ENVIRONMENT = "$job_env"
 EOF
 
 
+if [[ $OSG_INSTITUTION_ID ]]; then
+    cat >>$PILOT_CONFIG_FILE <<EOF
+NRP_OSG_INSTITUTION_ID = "$OSG_INSTITUTION_ID"
+MASTER_ATTRS = \$(MASTER_ATTRS), NRP_OSG_INSTITUTION_ID
+STARTD_ATTRS = \$(STARTD_ATTRS), NRP_OSG_INSTITUTION_ID
+EOF
+fi
+
 
 # Read a file for arbitrary additional attributes to insert into the startd ad
 extra_attributes_file=/etc/osg/extra-attributes.cfg
