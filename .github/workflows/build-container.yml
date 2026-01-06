@@ -1,7 +1,7 @@
 name: B&T images
 
 on:
-  push:
+  # push:
   pull_request:
   repository_dispatch:
     types:
@@ -17,20 +17,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['el9', 'cuda_11_8_0']
-        repo: ['development', 'testing', 'release']
+        ## TESTING
+        os: ['el9']
+        repo: ['release']
         image: ['osg-htc/ospool-ep']
-        osg_series: ['24', '25']
-        arch: ['amd64','arm64']
-        exclude:
-          # cuda builds take a super long time; only do one of them
-          - os: cuda_11_8_0
-            repo: development
-          - os: cuda_11_8_0
-            repo: testing
-          # EL10 isn't supported in OSG 24
-          - os: el10
-            osg_series: '24'
+        osg_series: ['24']
+        arch: ['amd64']
+        ## END TESTING
+
+        # os: ['el9', 'cuda_11_8_0']
+        # repo: ['development', 'testing', 'release']
+        # image: ['osg-htc/ospool-ep']
+        # osg_series: ['24', '25']
+        # arch: ['amd64','arm64']
+        # exclude:
+        #   # cuda builds take a super long time; only do one of them
+        #   - os: cuda_11_8_0
+        #     repo: development
+        #   - os: cuda_11_8_0
+        #     repo: testing
+        #   # EL10 isn't supported in OSG 24
+        #   - os: el10
+        #     osg_series: '24'
     steps:
       - uses: actions/checkout@v3
 
