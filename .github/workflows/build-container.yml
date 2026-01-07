@@ -56,16 +56,23 @@ jobs:
           echo "timestamp=$TIMESTAMP" >> ${GITHUB_OUTPUT}
 
       - id: build-image
-        name: Local image build
-        uses: opensciencegrid/build-container-action@HEAD
-        with:
-          registry_url: hub.opensciencegrid.org
-          osg_series: ${{ matrix.osg_series }}
-          osg_repo: ${{ matrix.repo }}
-          base_os: ${{ matrix.os }}
-          platform: linux/${{ matrix.arch }}
-          output_image: ${{ steps.custom-image-name.outputs.output_image }}
-          timestamp: ${{ steps.custom-image-name.outputs.timestamp }}
+        name: Cheat on building an image
+        env:
+          CONTAINER_IMAGE: hub.opensciencegrid.org/${{ steps.custom-image-name.outputs.output_image }}
+        run: |
+          sudo docker pull "${CONTAINER_IMAGE}"
+          echo "timestamp-image=${CONTAINER_IMAGE}" >> ${GITHUB_OUTPUT}
+
+        # name: Local image build
+        # uses: opensciencegrid/build-container-action@HEAD
+        # with:
+        #   registry_url: hub.opensciencegrid.org
+        #   osg_series: ${{ matrix.osg_series }}
+        #   osg_repo: ${{ matrix.repo }}
+        #   base_os: ${{ matrix.os }}
+        #   platform: linux/${{ matrix.arch }}
+        #   output_image: ${{ steps.custom-image-name.outputs.output_image }}
+        #   timestamp: ${{ steps.custom-image-name.outputs.timestamp }}
 
 
       - name: Prepare CVMFS
