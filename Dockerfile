@@ -110,6 +110,7 @@ RUN git clone --branch ${OSG_FLOCK_BRANCH} https://github.com/${OSG_FLOCK_REPO} 
  && install ospool-pilot/main/pilot/advertise-userenv                   /usr/sbin/osgvo-advertise-userenv \
  && install ospool-pilot/main/pilot/additional-htcondor-config          /usr/sbin/osgvo-additional-htcondor-config \
  && install ospool-pilot/main/lib/ospool-lib                            /gwms/client_group_main/ospool-lib \
+ && install ospool-pilot/main/pilot/pelican-setup                       /gwms/client_group_main/pelican-setup \
  && install ospool-pilot/main/pilot/singularity-extras                  /gwms/client_group_main/singularity-extras \
  && install job-wrappers/default_singularity_wrapper.sh                 /usr/sbin/osgvo-singularity-wrapper \
  && install ospool-pilot/main/job/prepare-hook                          /gwms/client_group_main/prepare-hook \
