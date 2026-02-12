@@ -229,9 +229,6 @@ ENV GLIDEIN_Start_Extra=
 # Add a random string in the NETWORK_HOSTNAME (useful if running multiple containers with the same actual hostname)
 ENV GLIDEIN_RANDOMIZE_NAME=false
 
-# Send pilot and condor logs to a central syslog server
-ENV ENABLE_REMOTE_SYSLOG=true
-
 # Use ITB versions of scripts and connect to the ITB pool
 ENV ITB=false
 

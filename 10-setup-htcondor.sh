@@ -197,7 +197,6 @@ case ${POOL} in
         default_cm2=cm-2.ospool-itb.osg-htc.org
         default_ccb1=ccb-1.ospool-itb.osg-htc.org
         default_ccb2=ccb-2.ospool-itb.osg-htc.org
-        default_syslog_host=syslog.osgdev.chtc.io
         GLIDECLIENT_Group=itb-container
         itb_sites_start_clause=' && (TARGET.ITB_Sites =?= True)'
         ;;
@@ -206,24 +205,20 @@ case ${POOL} in
         default_cm2=cm-2.ospool.osg-htc.org
         default_ccb1=ccb-1.ospool.osg-htc.org
         default_ccb2=ccb-2.ospool.osg-htc.org
-        default_syslog_host=syslog.osg.chtc.io
         GLIDECLIENT_Group=main-container
         itb_sites_start_clause=' && (TARGET.ITB_Sites =!= True)'
         ;;
     prod-path-facility)
         default_cm1=cm-1.facility.path-cc.io
         default_cm2=cm-2.facility.path-cc.io
-        default_syslog_host=syslog.osg.chtc.io
         GLIDECLIENT_Group=path-container
         ;;
     dev-path-facility)
         default_cm1=htcondor-cm-path.osgdev.chtc.io
         default_cm2=htcondor-cm-path.osg-dev.river.chtc.io
-        default_syslog_host=syslog.osgdev.chtc.io
         GLIDECLIENT_Group=path-container
         ;;
     *.*)
-        ENABLE_REMOTE_SYSLOG=false
         default_cm1=$POOL
         default_cm2=
         ;;
@@ -284,66 +279,6 @@ rm -rf /pilot/{log,rsyslog}
 # Setup syslog server
 mkdir -p /pilot/{log,log/log,rsyslog,rsyslog/pid,rsyslog/workdir,rsyslog/conf}
 touch /pilot/log/{Master,Start,Proc,SharedPort,XferStats,log/Starter}Log /pilot/log/StarterLog{,.testing}
-
-# Pick server to forward syslogs to
-SYSLOG_HOST=${SYSLOG_HOST:-$default_syslog_host}
-
-# Set some reasonable defaults for the token registry.
-if [[ "x$REGISTRY_HOST" != "x" ]]; then
-    REGISTRY_HOSTNAME="$REGISTRY_HOST"
-elif [[ "$SYSLOG_HOST" == "syslog.osgdev.chtc.io" ]]; then
-    REGISTRY_HOSTNAME="os-registry.osgdev.chtc.io"
-else
-    REGISTRY_HOSTNAME="os-registry.opensciencegrid.org"
-fi
-
-if ! is_true "$ENABLE_REMOTE_SYSLOG"; then
-    SYSLOG_HOST=
-    REGISTRY_HOSTNAME=
-    REGISTRY_HOST=
-else
-    if ! nslookup "$SYSLOG_HOST" >/dev/null; then
-        echo >&2 "*** SYSLOG_HOST $SYSLOG_HOST not found"
-        SYSLOG_HOST=""
-    else
-        # If hostcert generation fails, then we'll just skip the whole syslog thing.
-        /usr/local/sbin/generate-hostcert "$_CONDOR_SEC_PASSWORD_FILE" "$REGISTRY_HOSTNAME" || SYSLOG_HOST=""
-    fi
-fi
-
-if [[ "x$SYSLOG_HOST" != "x" ]]; then
-
-    for NAME in Condor Glidein Supervisord
-    do
-
-    cat >> /pilot/rsyslog/conf/forward.conf << EOF
-ruleset(name="forward${NAME}") {
-  action(type="omfwd"
-    queue.filename="fwdAll"
-    queue.maxdiskspace="100m"
-    queue.saveonshutdown="off"
-    queue.type="LinkedList"
-    action.resumeRetryCount="10"
-    StreamDriverMode="1"
-    StreamDriver="gtls"
-    StreamDriverAuthMode="x509/name"
-    Target="$SYSLOG_HOST" Port="6514" Protocol="tcp"
-    template="${NAME}_SyslogProtocol23Format"
-  )
-}
-EOF
-
-    done
-
-else
-
-    cat > /pilot/rsyslog/conf/forward.conf << EOF
-ruleset(name="forwardCondor") {}
-ruleset(name="forwardGlidein") {}
-ruleset(name="forwardSupervisord") {}
-EOF
-
-fi
 
 
 ######################
